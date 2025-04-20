@@ -1,0 +1,20 @@
+# Python cache files
+*.pyc
+__pycache__
+
+# Database files
+db.sqlite3
+*.db
+*.sqlite3
+
+# Virtual environments
+*.env
+*.venv
+venv/
+/envBillApp/
+
+# Logs and other generated files
+*.log
+*.pot
+*.py[cod]
+*.egg-info

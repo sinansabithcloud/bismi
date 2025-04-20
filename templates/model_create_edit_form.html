@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ modelname }} {% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/model_create_edit_form.css' %}">
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .table-container {
+        max-width: 800px;
+        margin: 20px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+{% if modelname == 'Fund' and view.object.pk == None %}
+<h2 class="page-heading">{{ modelname }}s</h2>
+{% else %}
+<h2 class="page-heading">{{ view.object.pk|yesno:"Edit,Create" }} {{ modelname }}</h2>
+{% endif %}
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    {% if modelname == 'Stock' %}
+    <a href="{% url 'create_stocktype_view' %}" class="primary-button">Create Stock Type</a>
+    <a href="{% url 'inventory' %}" class="primary-button">Back to Inventory</a>
+    {% elif modelname == 'StockSet' %}
+    <a href="{% url 'inventory' %}" class="primary-button">Back to Inventory</a>
+    {% elif modelname == 'StockType' %}
+    <a href="{% url 'create_stock_view' %}" class="primary-button">Back to Create Stock</a>
+    {% elif modelname == 'Purchase' %}
+    <a href="{% url 'list_purchase_view' %}" class="primary-button">History</a>
+    <!--a href="{% url 'home' %}" class="primary-button">Back to Home</a-->
+    {% elif modelname == 'Expense' %}
+    <a href="{% url 'list_expense' %}" class="primary-button">List Expenses</a>
+    <a href="{% url 'create_expense_type' %}" class="primary-button">Create Expense Type</a>
+    <!--a href="{% url 'home' %}" class="primary-button">Back to Home</a-->
+    {% elif modelname == 'Fund' %}
+    {% if view.object.pk == None %}
+    <!--a href="{% url 'home' %}" class="primary-button">Back to Home</a-->
+    {% else %}
+    <a href="{% url 'list_funds' %}" class="primary-button">Back to Fund</a>
+    {% endif %}
+    {% endif %}
+</div>
+
+{% if modelname == 'Fund' and view.object.pk == None %}
+<div class="table-container">
+    <div class="primary-table" style="grid-column: span 1;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fund in funds %}
+                <tr>
+                    <td>{{ fund.name }}</td>
+                    <td>{{ fund.current_balance }}</td>
+                    <td>
+                        <a href="{% url 'stockset_detail' fund.pk %}">View</a>
+                        <a href="{% url 'edit_fund' fund.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<form method="post" class="model-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endif %}
+
+{% if modelname == 'Expense' and view.object.pk == None %}
+<script>
+    document.getElementById('id_amount').focus();
+</script>
+{% endif %}
+
+
+
+<!-- jQuery (required by Select2) --> <!-- Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        // select2 multi selection
+        $('#id_stock').select2({
+            placeholder: 'Select multiple stocks'
+        });
+
+        // select2 single selection workaround
+        document.getElementById('id_stockset').multiple = true;
+        $('#id_stockset').select2({
+            placeholder: 'Select stocks'
+        });
+        document.getElementById('id_stockset').removeAttribute('multiple');
+
+        $(document.getElementById('id_stockset')).on('change', function () {
+            const self = this;
+            ajaxSendRequest('/api/get_stock_cost/', { stockset_id: self.value }, function (response) {
+                if (response) {
+                    console.log('Callback got:', response.cost_price);
+                    cost_price_tag = document.getElementById('id_price_per_unit');
+                    cost_price_tag.value = response.cost_price;
+                }
+            });
+        });
+    });
+
+    function ajaxSendRequest(endpoint, data, callback) {
+        $.ajax({
+            url: endpoint,
+            type: 'GET',
+            data: data,
+            success: function (response) {
+                if (callback) callback(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching remaining quantity:', error);
+                if (callback) callback(null);
+            }
+        });
+    }
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Create Sales Bill {% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/model_create_edit_form.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'bills/create_sales.css' %}">
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+{% endblock %}
+
+{% block body %}
+<h2 class="page-heading">Create Sales Bill</h2>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'list_sale_view' %}" class="primary-button">History</a>
+    <a href="{% url 'home' %}" class="primary-button">Back to Home</a>
+</div>
+
+<form method="post" id="sales-form" class="model-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p style="grid-column: span 1;">
+        <label for="id_discount-percent">Percent:</label> <br>
+        <input type="number" value="0" id="id_discount-percent" name="disocunt-percent">
+    </p>
+    <p style="grid-column: span 1;">
+        <label for="id_grand-total">Grand:</label> <br>
+        <input type="number" value="0" id="id_grand-total" name="grand-total" disabled>
+    </p>
+
+    {{ sales_formset.management_form }}
+    <div id="formset-container">
+        {% for form in sales_formset %}
+        {% if form.errors %}
+        <ul class="form-errors">
+            {% for field, errors in form.errors.items %}
+            <li>{{ field }}: {{ errors|join:", " }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="form-row model-form" style="{% if not form.instance.pk %} grid-template-columns: repeat(10, 1fr); {% else %} grid-template-columns: repeat(14, 1fr); {% endif %}">
+            <p>{{ form.stockset.label_tag }} <br> {{ form.stockset }}</p>
+            <p style="grid-column: span 1;">
+                <label for="id_sales-0-available">Available:</label> <br>
+                <input type="number" value="0" id="id_sales-0-available" name="sales-0-available" disabled>
+            </p>
+            <p style="display: none;">{{ form.id }}</p>
+            <p>{{ form.quantity.label_tag }} <br> {{ form.quantity }}</p>
+            <p>
+                <label for="id_sales-0-price_per_unit">Price:</label> <br>
+                {{ form.price_per_unit }}
+            </p>
+            <p {% if not form.instance.pk %} style="display: none;" {% endif %}>
+                {{ form.return_quantity.label_tag }} <br> {{ form.return_quantity }}
+            </p>
+            <p {% if not form.instance.pk %} style="display: none;" {% endif %}>
+                <label for="{{ form.return_price_per_unit.id_for_label }}">Return price:</label>
+                <br> {{ form.return_price_per_unit }}
+            </p>
+            <p>
+                <label for="id_sales-0-available">Total:</label> <br>
+                <input type="number" value="0" id="id_sales-0-total" name="sales-0-total" disabled>
+            </p>
+
+            {% if form.instance.pk %}
+            <label style="margin: auto;">
+                {{ form.DELETE }} Delete?
+            </label>
+            {% endif %}
+            <button type="button" class="remove-form" {% if form.instance.pk %} style="display: none;" {% endif %}>Remove</button>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="form-button-container">
+        <button type="button" id="add-form">Add</button>
+        <button type="submit" id="submit-form">Submit</button>
+    </div>
+</form>
+
+
+<!-- jQuery (required by Select2) --> <!-- Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- JavaScript for dynamic formset -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('formset-container');
+        const addBtn = document.getElementById('add-form');
+        const totalForms = document.getElementById('id_sales-TOTAL_FORMS');
+        const formTemplateExample = container.querySelector('.form-row').cloneNode(true);
+
+        addBtn.addEventListener('click', () => {
+            const formCount = parseFloat(totalForms.value);
+            const firstForm = container.querySelector('.form-row');
+            const newForm = formTemplateExample.cloneNode(true);
+
+            // Update name/id attributes for inputs
+            newForm.querySelectorAll('input').forEach(input => {
+                if (input.name) {
+                    input.name = input.name.replace(/\d+/, formCount);
+                    input.id = input.id.replace(/\d+/, formCount);
+                }
+                input.addEventListener('input', (event) => {
+                    updateTotalTag(input.id);
+                });
+            });
+
+            // Update for attributes for label
+            newForm.querySelectorAll('label').forEach(label => {
+                label.htmlFor = label.htmlFor.replace(/\d+/, formCount);
+                label.hidden = true;
+            });
+
+            newForm.querySelectorAll('br').forEach(br => br.remove());
+
+            // Update name/id attributes for selects
+            newForm.querySelectorAll('select').forEach(select => {
+                if (select.name) {
+                    select.name = select.name.replace(/\d+/, formCount);
+                    select.id = select.id.replace(/\d+/, formCount);
+                }
+                setSelect2(select); // Initialize Select2 after updating attributes
+            });
+
+
+
+            container.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+
+        container.addEventListener('click', e => {
+            if (e.target.classList.contains('remove-form')) {
+                const rows = container.querySelectorAll('.form-row');
+                if (rows.length > 1) {
+                    e.target.closest('.form-row').remove();
+                    totalForms.value = rows.length - 1;
+                }
+            }
+        });
+
+        document.getElementById('id_discount_price').addEventListener('input', (event) => {
+            updateGrandTotalTag();
+        });
+
+        document.getElementById('id_discount-percent').addEventListener('input', (event) => {
+            let grand_total = 0
+            document.querySelectorAll('[id^="id_sales-"]').forEach(el => {
+                if (/^id_sales-\d+-total$/.test(el.id)) {
+                    grand_total = grand_total + parseFloat(el.value);
+                }
+            });
+            const newDiscount = (grand_total * parseFloat(event.target.value)) / 100
+            document.getElementById('id_discount_price').value = newDiscount;
+            updateGrandTotalTag();
+        });
+
+        document.getElementById('id_discount_price').addEventListener('input', (event) => {
+            console.log('inside');
+            let grand_total = 0
+            document.querySelectorAll('[id^="id_sales-"]').forEach(el => {
+                if (/^id_sales-\d+-total$/.test(el.id)) {
+                    grand_total = grand_total + parseFloat(el.value);
+                }
+            });
+
+            const discountValue = parseFloat(event.target.value);
+            let newDiscountPercent = 0;
+            if (grand_total > 0 && !isNaN(discountValue)) {
+                newDiscountPercent = (discountValue / grand_total) * 100;
+                console.log(`Discount Percent: ${newDiscountPercent.toFixed(2)}%`);
+            } else {
+                console.log('Cannot calculate discount percent — grand_total is 0 or invalid.');
+            }
+
+            document.getElementById('id_discount-percent').value = newDiscountPercent;
+            console.log(newDiscount)
+            updateGrandTotalTag();
+        });
+
+        setSelect2ForAll();
+
+        // input fields change will calculate the total
+        $('.form-row input').each(function () {
+            this.addEventListener('input', (event) => {
+                updateTotalTag(event.target.id);
+            });
+        });
+
+    });
+
+    function updateTotalTag(id) {
+        totalTag = document.getElementById(id.replace(/(id_sales-\d+)-.+/, '$1-total'));
+        priceTag = document.getElementById(id.replace(/(id_sales-\d+)-.+/, '$1-price_per_unit'));
+        quantityTag = document.getElementById(id.replace(/(id_sales-\d+)-.+/, '$1-quantity'));
+        totalTag.value = parseFloat(priceTag.value) * parseFloat(quantityTag.value)
+        updateGrandTotalTag();
+    }
+
+    function updateGrandTotalTag() {
+        let grand_total = 0
+        document.querySelectorAll('[id^="id_sales-"]').forEach(el => {
+            if (/^id_sales-\d+-total$/.test(el.id)) {
+                grand_total = grand_total + parseFloat(el.value);
+            }
+        });
+        grand_total = grand_total - parseFloat(document.getElementById('id_discount_price').value);
+        document.getElementById('id_grand-total').value = grand_total;
+    }
+
+    function setSelect2(select) {
+        const $select = $(select);
+        $select.attr('multiple', true);
+        $select.select2({
+            placeholder: 'Select options'
+        });
+        $select.removeAttr('multiple');
+        $(select).on('change', function () {
+            const self = this;
+            ajaxSendRequest('/inventory/api/get_stock_details/', { stockset_id: self.value }, function (response) {
+                if (response) {
+                    console.log('Callback got:', response.remaining_quantity);
+                    remaining_quantity_tag = document.getElementById(self.id.replace("stockset", "available"));
+                    selling_price_tag = document.getElementById(self.id.replace("stockset", "price_per_unit"));
+                    remaining_quantity_tag.value = response.remaining_quantity;
+                    selling_price_tag.value = response.selling_price;
+                }
+                updateTotalTag(self.id);
+            });
+        });
+    }
+
+    function ajaxSendRequest(endpoint, data, callback) {
+        $.ajax({
+            url: endpoint,
+            type: 'GET',
+            data: data,
+            success: function (response) {
+                if (callback) callback(response);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error fetching remaining quantity:', error);
+                if (callback) callback(null);
+            }
+        });
+    }
+
+    function setSelect2ForAll() {
+        $('.form-row select').each(function () {
+            setSelect2($(this));
+        });
+    }
+
+</script>
+
+{% endblock %}

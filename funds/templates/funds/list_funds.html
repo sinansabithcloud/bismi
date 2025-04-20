@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ modelname }} {% endblock %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/model_create_edit_form.css' %}">
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .table-container {
+        max-width: 800px;
+        margin: 20px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">Funds</h2>
+
+
+<div class="table-container">
+    <div class="primary-table" style="grid-column: span 1;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Balance</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fund in object_list %}
+                <tr>
+                    <td>{{ fund.name }}</td>
+                    <td>{{ fund.current_balance }}</td>
+                    <td>
+                        <a href="{% url 'view_fund' fund.pk %}">View</a>
+                        <a href="{% url 'edit_fund' fund.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

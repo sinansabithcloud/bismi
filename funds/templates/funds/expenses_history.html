@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %} Expenses {% endblock %}
+
+{% block css %}
+<style>
+    .table-grid {
+        width: 80%;
+        margin: 30px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">Expenses</h2>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'create_expense' %}" class="primary-button">Create Expense</a>
+    <!--a href="{% url 'home' %}" class="primary-button">Go to Home</a-->
+</div>
+
+<div class="table-grid">
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Type</th>
+                    <th>Desc</th>
+                    <th>Mode</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                <tr>
+                    <td>{{ item.date|date:"Y-m-d" }} {{ item.time|date:"H:i" }}</td>
+                    <td>{{ item.amount }}</td>
+                    <td>{{ item.expense_type.name }}</td>
+                    <td>{{ item.description }}</td>
+                    <td>{{ item.fund.name }}</td>
+                    <td>
+                        <a href="{% url 'edit_expense' item.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">Home</h2>
+
+<br>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'inventory' %}" class="primary-button">Inventory</a>
+    <a href="{% url 'create_sale_view' %}" class="primary-button">Sale</a>
+    <a href="{% url 'create_purchase_view' %}" class="primary-button">Purchase</a>
+</div>
+
+<br><br>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'home' %}" class="primary-button">Report</a>
+    <a href="{% url 'create_expense' %}" class="primary-button">Expense</a>
+    <a href="{% url 'list_funds' %}" class="primary-button">Funds</a>
+</div>
+
+{% endblock %}

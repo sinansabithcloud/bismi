@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} {{ fund.name }} {% endblock %}
+
+{% block css %}
+<style>
+    .table-grid {
+        width: 80%;
+        margin: 30px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">{{ fund.name }}</h2>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'list_funds' %}" class="primary-button">Back to Funds</a>
+    <a class="primary-button">Balance: ₹{{ fund.current_balance }}</a>
+</div>
+
+<div class="table-grid">
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>Sale</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Amount</th>
+                    <th>Bill</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in fund.salesbills.all|dictsortreversed:"bill_date" %}
+                <tr>
+                    <td>{{ item.bill_date|date:"d-m-Y" }}</td>
+                    <td>{{ item.customer }}</td>
+                    <td>{{ item.total_amount_after_discount }}</td>
+                    <td>
+                        <a href="{% url 'full_sales_bill' item.pk %}">Full</a>
+                        <a href="{% url 'thermal_sales_bill' item.pk %}">Thermal</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_sale' item.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No Sales found for this fund.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>Purchase</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in fund.purchases.all|dictsortreversed:"date" %}
+                <tr>
+                    <td>{{ item.date|date:"d-m-Y" }}</td>
+                    <td>{{ item.stockset.name }}</td>
+                    <td>{{ item.net_total_price }}</td>
+                    <td>
+                        <a href="{% url 'edit_purchase' item.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No purchases found for this fund.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>Expense</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in fund.expenses.all|dictsortreversed:"date" %}
+                <tr>
+                    <td>{{ item.date|date:"d-m-Y" }}</td>
+                    <td>{{ item.expense_type.name }} - {{ item.description }}</td>
+                    <td>{{ item.amount }}</td>
+                    <td>
+                        <a href="{% url 'edit_expense' item.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No purchases found for this fund.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

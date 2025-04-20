@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %} Inventory {% endblock %}
+
+{% block css %}
+<style>
+    .table-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        width: 80%;
+        margin: 30px auto;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">Inventory</h2>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'create_stock_view' %}" class="primary-button">Create Stock</a>
+    <a href="{% url 'create_stockset_view' %}" class="primary-button">Create Stock Set</a>
+    <a href="{% url 'home' %}" class="primary-button">Back to Home</a>
+</div>
+
+<div class="table-grid">
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>Set</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                {% if item.stock_type == 'Set' %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.remaining_quantity }}</td>
+                    <td>
+                        {% if item.stock_type == 'Set' %}
+                        <a href="{% url 'stockset_detail' item.stock_pk %}">View</a>
+                        <a href="{% url 'edit_stockset_view' item.stock_pk %}">Edit</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% for stock_type in stock_types %}
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>{{ stock_type }}</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object_list %}
+                {% if item.stock_type == stock_type.name %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.remaining_quantity }}</td>
+                    <td>
+                        {% if item.stock_type == 'Set' %}
+                        <a href="{% url 'stock_detail' item.stock_pk %}">View</a>
+                        <a href="{% url 'edit_stockset_view' item.stock_pk %}">Edit</a>
+                        {% else %}
+                        <a href="{% url 'stock_detail' item.stock_pk %}">View</a>
+                        <a href="{% url 'edit_stock_view' item.stock_pk %}">Edit</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>Stock Types</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in stock_types %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>
+                        <a href="{% url 'stocktype_detail' item.pk %}">View</a>
+                        <a href="{% url 'edit_stocktype_view' item.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

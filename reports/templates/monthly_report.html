@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ report_name }} Report {% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">{{ report_name }} Report </h2>
+
+<div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+    {% if report_name == 'Monthly' %}
+    <a href="{% url 'daily_report' %}" class="primary-button">Daily Report</a>
+    {% elif report_name == 'Daily'  %}
+    <a href="{% url 'monthly_report' %}" class="primary-button">Monthly Report</a>
+    {% endif %}
+    <a href="{% url 'home' %}" class="primary-button">Back to Home</a>
+</div>
+
+<div class="primary-table">
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Sales</th>
+                <th>Discount</th>
+                <th>Purchase</th>
+                <th>Expense</th>
+                <th>Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in report %}
+            <tr>
+                {% if report_name == 'Monthly' %}
+                    <td>{{ data.date|date:"F Y" }}</td>
+                {% else %}
+                    <td>{{ data.date|date:"F d Y" }}</td>
+                {% endif %}
+                <td><a href="{% url 'list_sale_view' %}">{{ data.sales }}</a></td>
+                <td><a href="{% url 'list_sale_view' %}">{{ data.discount }}</a></td>
+                <td><a href="{% url 'list_purchase_view' %}">{{ data.purchases }}</a></td>
+                <td><a href="{% url 'list_expense' %}">{{ data.expenses }}</a></td>
+                <td>{{ data.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

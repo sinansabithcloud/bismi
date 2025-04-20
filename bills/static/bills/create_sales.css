@@ -1,0 +1,49 @@
+#sales-form {
+    max-width: 90%;
+    grid-template-columns: repeat(6, 1fr); 
+}
+
+.model-forms p {
+    height: fit-content;
+}
+
+#formset-container, .form-button-container {
+    grid-column: span 6;
+}
+
+.form-row {
+    grid-template-columns: repeat(12, 1fr);
+    padding: 0 10px !important;
+    max-width: 100%;
+}
+
+.form-row > p {
+    grid-column: span 2;
+}
+
+.remove-form {
+    grid-column: span 1 !important;
+    height: fit-content; 
+    justify-content: end; 
+    align-items:end; 
+    margin-top: auto; 
+    margin-bottom: 12px;
+}
+
+.form-button-container {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+#add-form {
+    grid-column: span 1;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    width: fit-content;
+}
+
+#submit-form {
+    grid-column: 6 / 8;
+}

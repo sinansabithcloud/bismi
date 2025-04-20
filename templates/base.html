@@ -1,0 +1,47 @@
+{% load pwa %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% progressive_web_app_meta %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{% block title %} Base {% endblock title %}</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/install_prompt.css' %}">
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+  {% block css %} {% endblock css %}
+</head>
+
+<body>
+
+  <!-- Main navigation (Navbar) -->
+  <nav>
+    <div class="nav-container">
+        <h2>Bismi Book Depo</h2>
+        <div class="nav-links">
+          <a href="{% url 'inventory' %}" class="{% if 'inventory' in request.path %}active{% endif %}">Inventory</a>
+          <a href="{% url 'list_funds' %}" class="{% if request.path|slice:':7' == '/funds/' and not request.path|slice:':17' == '/funds/expenses' %}active{% endif %}">Funds</a>
+          <a href="{% url 'create_expense' %}" class="{% if 'expenses' in request.path %}active{% endif %}">Expense</a>
+          <a href="{% url 'create_sale_view' %}" class="{% if 'sale' in request.path %}active{% endif %}">Sale</a>
+          <a href="{% url 'create_purchase_view' %}" class="{% if 'purchase' in request.path %}active{% endif %}">Purchase</a>
+          <a href="{% url 'daily_report' %}" class="{% if 'report' in request.path %}active{% endif %}">Report</a>
+      </div>      
+    </div>
+  </nav>
+
+
+  <!-- Main content area -->
+  <main>
+    {% block body %} {% endblock %}
+  </main>
+
+  <!-- Include JavaScript files -->
+  {% block js %} {% endblock js %}
+
+</body>
+
+</html>

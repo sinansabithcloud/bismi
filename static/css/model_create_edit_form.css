@@ -1,0 +1,59 @@
+.model-form {
+    max-width: 800px; /* Increased width to fit two columns */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 0px 20px;
+}
+
+.model-form p {
+    margin: 10px 0;
+    grid-column: span 1; /* Make paragraph span both columns if needed */
+}
+
+.model-form p:nth-of-type(odd):last-of-type {
+    grid-column: span 2;
+}
+
+
+.model-form input,
+.model-form select,
+.model-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.model-form button {
+    grid-column: span 2; /* Make the button span both columns */
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.model-form button:hover {
+    background-color: #0056b3;
+}
+
+.select2-selection__choice__remove {
+    display: none;
+}
+
+.select2-selection__choice {
+    border: none !important;
+    background-color: white !important;
+    padding: 0 !important;
+}
+
+

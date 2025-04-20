@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sale Bill - {{ sales_bill.bill_number }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        .bill-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+        }
+
+        .bill-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .bill-details,
+        .customer-details {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bill-details div,
+        .customer-details div {
+            flex-basis: 48%;
+            /* Adjust as needed */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .total-section {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+
+            display: flex;
+            justify-content: right;
+            gap: 10px;
+        }
+
+        .print-button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer-notes {
+            text-align: center;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            body {
+                margin: 0;
+                font-size: 12pt;
+                /* Adjust print font size */
+            }
+
+            .bill-container {
+                border: none;
+                box-shadow: none;
+                margin: 0;
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .print-button-container {
+                display: none;
+                /* Hide the print button when printing */
+            }
+
+            th,
+            td {
+                border: 1px solid #ccc;
+                /* Ensure borders print */
+            }
+
+            a[href]:after {
+                content: none !important;
+                /* Prevent URLs from showing in print */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bill-container">
+        <div class="bill-header">
+            <h1 style="margin-bottom: 0;">Bismi Book Depot</h1>
+            <h3 style="margin-top: 0;">Logan's road, Thalassery <br> 9895188762</h3>
+        </div>
+
+        <div class="bill-details">
+            <div><strong>Bill Number:</strong> {{ sales_bill.bill_number }}</div>
+            <div><strong>Bill Date:</strong> {{ sales_bill.bill_date|date:"Y-m-d H:i" }}</div>
+        </div>
+        {% if sales_bill.customer %}
+        <div class="customer-details">
+            <div><strong>Customer Name:</strong> {{ sales_bill.customer }}</div>
+            <div><strong>Payment Mode:</strong> {{ sales_bill.fund.name }}</div>
+        </div>
+        {% endif %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Item Description</th>
+                    <th class="text-right">Quantity</th>
+                    <th class="text-right">Unit Price</th>
+                    <th class="text-right">Total Price</th>
+                </tr>
+            </thead>
+            <tbody>{% for sale in sales_bill.sales.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <strong>{{ sale.stockset.name }}</strong>
+                        {% if sale.stockset.stock_type == 'Set' %}
+                        <ul style="list-style: none; padding-left: 1em; margin: 0;">
+                            {% for stock in sale.stockset.stock.all %}
+                            <li>
+                                <span style="color: #555;">{{ stock.name }}</span>
+                                <span style="float: right;">Rs {{ stock.selling_price }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </td>
+                    <td class="text-right">
+                        {{ sale.quantity }} {% if sale.stockset.stock_type == 'Perfume' %}ml{% endif %}
+                    </td>
+                    <td class="text-right">{{ sale.price_per_unit|floatformat:2 }}</td>
+                    <td class="text-right">{{ sale.total_price|floatformat:2 }}</td>
+                </tr>
+                {% if sale.return_quantity > 0 %}
+                <tr style="background-color: #fef2f2;">
+                    <td></td>
+                    <td><em>Returned</em></td>
+                    <td class="text-right">
+                        -{{ sale.return_quantity }} {% if sale.stockset.stock_type == 'Perfume' %}ml{% endif %}
+                    </td>
+                    <td class="text-right">-{{ sale.return_price_per_unit|floatformat:2 }}</td>
+                    <td class="text-right">-{{ sale.return_total_price|floatformat:2 }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <div class="total-section-names">
+                {% if sales_bill.discount_price and sales_bill.discount_price > 0 %}
+                <p style="margin: 0;">Total:</p>
+                <p style="margin: 0;">Discount ({{ sales_bill.discount_percent|floatformat:2 }}%):</p>
+                {% endif %}
+                <strong>Grand Total:</strong>
+            </div>
+            <div class="total-section-values">
+                {% if sales_bill.discount_price and sales_bill.discount_price > 0 %}
+                <p style="margin: 0;">{{ sales_bill.total_amount_before_discount|floatformat:2 }}</p>
+                <p style="margin: 0;">{{ sales_bill.discount_price|floatformat:2 }}</p>
+                {% endif %}
+                <strong>{{ sales_bill.total_amount_after_discount|floatformat:2 }}</strong>
+            </div>
+
+        </div>
+
+        <div class="footer-notes">
+            <p>Thank you for your business!</p>
+        </div>
+
+    </div>
+
+    <div class="print-button-container">
+        <button onclick="window.print();">Print Bill</button>
+        <a href="{% url 'home' %}">
+            <button>Go to Sales History</button>
+        </a>
+        
+    </div>
+
+</body>
+
+</html>

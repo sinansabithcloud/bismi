@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ report_name }} Report {% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">{{ report_name }} Report </h2>
+
+<div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+    {% if report_name == 'Monthly' %}
+    <a href="{% url 'daily_report' %}" class="primary-button">Daily Report</a>
+    {% elif report_name == 'Daily'  %}
+    <a href="{% url 'monthly_report' %}" class="primary-button">Monthly Report</a>
+    {% endif %}
+    <a href="{% url 'home' %}" class="primary-button">Back to Home</a>
+</div>
+
+<div class="primary-table">
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">Date</th>
+                <th colspan="2">Sales</th>
+                <th colspan="2">Purchase</th>
+                <th colspan="2">Expense</th>
+            </tr>
+        </thead>
+        <thead>
+            <tr>
+                <th></th>
+                <th>Cash</th>
+                <th>Upi</th>
+                <th>Cash</th>
+                <th>Upi</th>
+                <th>Cash</th>
+                <th>Upi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in report %}
+            <tr>
+                {% if report_name == 'Monthly' %}
+                    <td>{{ data.date|date:"F Y" }}</td>
+                {% else %}
+                    <td>{{ data.date|date:"F d Y" }}</td>
+                {% endif %}
+                <td>{{ data.cash_sales }}</td>
+                <td>{{ data.upi_sales }}</td>
+                <td>{{ data.cash_purchases }}</td>
+                <td>{{ data.upi_purchases }}</td>
+                <td>{{ data.cash_expenses }}</td>
+                <td>{{ data.upi_expenses }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

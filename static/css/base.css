@@ -1,0 +1,163 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+
+main {
+  margin-top: 60px;
+  padding: 20px 40px;
+}
+
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+
+
+.nav-links a {
+  color: #1f2937;
+  text-decoration: none;
+  padding: 10px 15px;
+  display: inline-block;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.nav-links a:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+}
+
+.nav-links a.active {
+  border-bottom: 2px solid #3b82f6;
+  color: #3b82f6;
+}
+
+.select2-selection__choice__remove {
+  display: none;
+}
+
+
+/* Page Heading */
+
+.page-heading {
+  text-align: center;
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+
+/* Primary Button */
+
+.primary-button {
+  display: inline-block;
+  color: #007bff;
+  padding: 10px 20px;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  border: 1px solid #007bff;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  color: #fff;
+  background-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.primary-button:active {
+  background-color: #004494;
+}
+
+
+/* Primary table */
+
+.primary-table {
+  width: 90%;
+  height: 100%;
+  margin: auto;
+}
+
+.primary-table h3 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.primary-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #ddd;
+  margin-bottom: 40px;
+}
+
+.primary-table thead {
+  background-color: #4F46E5;
+  /* Indigo */
+  color: #ffffff;
+}
+
+.primary-table th,
+.primary-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+  /* adds both horizontal and vertical lines */
+}
+
+.primary-table th {
+  text-align: center;
+}
+
+.primary-table tbody tr:nth-child(even) {
+  background-color: #f9f9ff;
+}
+
+.primary-table tbody tr:hover {
+  background-color: #eef2ff;
+}
+
+.primary-table a {
+  color: #4F46E5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.primary-table button {
+  color: #4F46E5;
+  text-decoration: none;
+  font-weight: 500;
+  border: none;
+  background-color: transparent;
+}
+
+.primary-table a:hover {
+  text-decoration: underline;
+}

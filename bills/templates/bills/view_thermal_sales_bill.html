@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Receipt - {{ sales_bill.bill_number }}</title>
+    <style>
+        body {
+            font-family: "Courier", monospace;
+            font-size: 12px;
+            margin: 0;
+            padding: 5px;
+            width: 58mm; /* Set to 58mm paper width */
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .line {
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        th, td {
+            padding: 2px 0;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+            body {
+                margin: 0;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="center bold">Bismi Book Depot</div>
+    <div class="center">Logan's Road, Thalassery</div>
+    <div class="center">Ph: 9895188762</div>
+
+    <div class="line"></div>
+
+    <div>Bill No: {{ sales_bill.bill_number }}</div>
+    <div>Date: {{ sales_bill.bill_date|date:"Y-m-d H:i" }}</div>
+
+    {% if sales_bill.customer %}
+    <div>Customer: {{ sales_bill.customer }}</div>
+    {% endif %}
+
+    <div>Mode: {{ sales_bill.fund.name }}</div>
+
+    <div class="line"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Item</th>
+                <th class="right">Qty</th>
+                <th class="right">Rate</th>
+                <th class="right">Amt</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for sale in sales_bill.sales.all %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ sale.stockset.name }}</td>
+                <td class="right">{{ sale.quantity }}</td>
+                <td class="right">{{ sale.price_per_unit|floatformat:2 }}</td>
+                <td class="right">{{ sale.net_total_price|floatformat:2 }}</td>
+            </tr>
+
+            {% if sale.return_quantity > 0 %}
+            <tr>
+                <td></td>
+                <td>Return</td>
+                <td class="right">-{{ sale.return_quantity }}</td>
+                <td class="right">-{{ sale.return_price_per_unit|floatformat:2 }}</td>
+                <td class="right">-{{ sale.return_total_price|floatformat:2 }}</td>
+            </tr>
+            {% endif %}
+
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="line"></div>
+
+    {% if sales_bill.discount_price and sales_bill.discount_price > 0 %}
+    <div class="row">
+        <div>Total:</div>
+        <div>{{ sales_bill.total_amount_before_discount|floatformat:2 }}</div>
+    </div>
+    <div class="row">
+        <div>Discount ({{ sales_bill.discount_percent|floatformat:2 }}%):</div>
+        <div>{{ sales_bill.discount_price|floatformat:2 }}</div>
+    </div>
+    {% endif %}
+
+    <div class="row bold">
+        <div>Grand Total:</div>
+        <div>{{ sales_bill.total_amount_after_discount|floatformat:2 }}</div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="center">Thank You!</div>
+    <div class="center">Visit Again</div>
+
+    <div class="center" style="margin-top: 10px;">
+        <button onclick="window.print();">Print</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.print();
+        });
+    </script>
+
+</body>
+</html>

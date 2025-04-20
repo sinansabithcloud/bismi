@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ stocktype.name }} {% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">Stock Type - {{ stocktype.name }}</h2>
+
+<div style="display: flex; justify-content: center; gap: 10px;">
+    <a href="{% url 'inventory' %}" class="primary-button">Back to Inventory</a>
+</div>
+
+Need to print all the transactions of all these stocksets <br>
+
+{% for stock in stocktype.stocks.all %}
+    {% for stockset in stock.stocksets.all %}
+        <p>{{ stockset }}</p>
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}
