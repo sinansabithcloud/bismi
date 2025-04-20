@@ -1,4 +1,12 @@
-# Inventory and Billing App with Django
+# Django ERP Web Application
+
+## Features
+- Inventory Management
+- Sales Billing
+- Thermal Printing
+- Daily & Monthly Reports
+- Daily Expenses
+- Fund Management (Cash, Bank)
 
 ## Prerequisites
 Ensure you have the following installed on your system:
