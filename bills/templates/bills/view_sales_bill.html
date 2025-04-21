@@ -124,7 +124,7 @@
 
         <div class="bill-details">
             <div><strong>Bill Number:</strong> {{ sales_bill.bill_number }}</div>
-            <div><strong>Bill Date:</strong> {{ sales_bill.bill_date|date:"Y-m-d H:i" }}</div>
+            <div><strong>Bill Date:</strong> {{ sales_bill.bill_date|date:"Y-m-d" }}</div>
         </div>
         {% if sales_bill.customer %}
         <div class="customer-details">

@@ -3,6 +3,12 @@
 {% block title %} {{ stockset.name }} {% endblock %}
 
 {% block css %}
+<style>
+    .table-grid {
+        width: 80%;
+        margin: 30px auto;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
@@ -13,9 +19,87 @@
     <a href="{% url 'inventory' %}" class="primary-button">Back to Inventory</a>
 </div>
 
-Need to print all the transactions of all this stockset <br>
 
-<p>{{ stockset }}</p>
+<div class="table-grid">
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>
+            Purchase - {{ stockset.name }}
+        </h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% for item in stockset.purchases.all %}
+                <tr>
+                    <td>{{ item.date|date:"d-m-Y" }}</td>
+                    <td>{{ item.net_quantity }}</td>
+                    <td>{{ item.price_per_unit }}</td>
+                    <td>{{ item.net_total_price }}</td>
+                    <td>
+                        <a href="{% url 'edit_purchase' item.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">No Purchases found for this Stock</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="primary-table" style="grid-column: span 1;">
+        <h3>
+            Sales - {{ stockset.name }}
+        </h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Bill</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for item in stockset.sales.all %}
+                <tr>
+                    <td>{{ item.date|date:"d-m-Y" }}</td>
+                    <td>{{ item.net_quantity }}</td>
+                    <td>{{ item.price_per_unit }}</td>
+                    <td>{{ item.net_total_price }}</td>
+                    <td>
+                        <a href="{% url 'full_sales_bill' item.bill.pk %}">Full</a>
+                        <a href="{% url 'thermal_sales_bill' item.bill.pk %}">Thermal</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'edit_sale' item.bill.pk %}">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7">No Sales found for this Stock</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 
 
 {% endblock %}

@@ -40,6 +40,7 @@ class Sale(models.Model):
 
 class Purchase(models.Model):
     stockset = models.ForeignKey(StockSet, on_delete=models.CASCADE, related_name='purchases')
+    datetime = models.DateTimeField(auto_now_add=True)
     date = models.DateField(auto_now_add=True)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price_per_unit = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])

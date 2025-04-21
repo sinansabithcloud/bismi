@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Receipt - {{ sales_bill.bill_number }}</title>
@@ -9,7 +10,8 @@
             font-size: 12px;
             margin: 0;
             padding: 5px;
-            width: 58mm; /* Set to 58mm paper width */
+            width: 58mm;
+            /* Set to 58mm paper width */
         }
 
         .center {
@@ -34,7 +36,8 @@
             width: 100%;
         }
 
-        th, td {
+        th,
+        td {
             padding: 2px 0;
         }
 
@@ -46,6 +49,7 @@
             button {
                 display: none;
             }
+
             body {
                 margin: 0;
                 width: auto;
@@ -53,6 +57,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="center bold">Bismi Book Depot</div>
@@ -62,7 +67,7 @@
     <div class="line"></div>
 
     <div>Bill No: {{ sales_bill.bill_number }}</div>
-    <div>Date: {{ sales_bill.bill_date|date:"Y-m-d H:i" }}</div>
+    <div>Date: {{ sales_bill.bill_date|date:"Y-m-d" }}</div>
 
     {% if sales_bill.customer %}
     <div>Customer: {{ sales_bill.customer }}</div>
@@ -83,7 +88,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for sale in sales_bill.sales.all %}
+            {% for sale in sales_bill.sales.all %}
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ sale.stockset.name }}</td>
@@ -102,7 +107,7 @@
             </tr>
             {% endif %}
 
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 
@@ -131,13 +136,16 @@
 
     <div class="center" style="margin-top: 10px;">
         <button onclick="window.print();">Print</button>
+        <button onclick="window.location.href = '/';">Go To Home</button>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             window.print();
+          
         });
     </script>
 
 </body>
+
 </html>

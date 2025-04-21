@@ -36,7 +36,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in fund.salesbills.all|dictsortreversed:"bill_date" %}
+                {% for item in fund.salesbills.all|dictsortreversed:"bill_datetime" %}
                 <tr>
                     <td>{{ item.bill_date|date:"d-m-Y" }}</td>
                     <td>{{ item.customer }}</td>

@@ -24,11 +24,11 @@
         <h2>Bismi Book Depo</h2>
         <div class="nav-links">
           <a href="{% url 'inventory' %}" class="{% if 'inventory' in request.path %}active{% endif %}">Inventory</a>
-          <a href="{% url 'list_funds' %}" class="{% if request.path|slice:':7' == '/funds/' and not request.path|slice:':17' == '/funds/expenses' %}active{% endif %}">Funds</a>
+          <a href="{% url 'list_funds' %}" class="{% if '/funds/' in request.path and not '/funds/expenses/' in request.path %}active{% endif %}">Funds</a>
           <a href="{% url 'create_expense' %}" class="{% if 'expenses' in request.path %}active{% endif %}">Expense</a>
           <a href="{% url 'create_sale_view' %}" class="{% if 'sale' in request.path %}active{% endif %}">Sale</a>
           <a href="{% url 'create_purchase_view' %}" class="{% if 'purchase' in request.path %}active{% endif %}">Purchase</a>
-          <a href="{% url 'daily_report' %}" class="{% if 'report' in request.path %}active{% endif %}">Report</a>
+          <a href="{% url 'monthly_report' %}" class="{% if 'report' in request.path %}active{% endif %}">Report</a>
       </div>      
     </div>
   </nav>

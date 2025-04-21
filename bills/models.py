@@ -13,8 +13,8 @@ from django.db import models
 
 class SalesBill(models.Model):
     bill_datetime = models.DateTimeField(auto_now_add=True)  # keep original for now
-    bill_date = models.DateField(null=True, blank=True)
-    bill_time = models.TimeField(auto_now_add=True, null=True, blank=True)
+    bill_date = models.DateField(auto_now_add=True)
+    bill_time = models.TimeField(auto_now_add=True)
 
     fund = models.ForeignKey(Fund, on_delete=models.CASCADE, related_name='salesbills')
     sales_bill_type = models.ForeignKey(SalesBillType, on_delete=models.CASCADE, related_name='salesbills')

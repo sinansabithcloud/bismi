@@ -11,6 +11,8 @@ def daily_report(request):
     purchases_dates = Purchase.objects.values_list('date', flat=True).distinct()
     expenses_dates = Expense.objects.values_list('date', flat=True).distinct()
 
+    print(sales_dates)
+
     # Combine all unique dates into one set
     all_dates = set(sales_dates) | set(purchases_dates) | set(expenses_dates)
 
@@ -89,6 +91,9 @@ def daily_report(request):
         'cash_expenses': data['cash_expenses'],
         'upi_expenses': data['upi_expenses']}
         for date, data in report.items()]
+    
+    for i in report_list:
+        print(i['date'])
 
     # Sort the report by date (newest first)
     report_list.sort(key=lambda x: x['date'], reverse=True)
