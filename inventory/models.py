@@ -17,7 +17,8 @@ class Stock(models.Model):
     name = models.CharField(unique=True, max_length=100)
     initial_quantity = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     cost_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    selling_price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    selling_price_retail = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    selling_price_wholesale = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     supplier = models.CharField(max_length=100, blank=True, null=True)  # optional
     stock_type = models.ForeignKey(StockType, on_delete=models.CASCADE, related_name='stocks', null=True, blank=True)  # optional
 
@@ -75,11 +76,18 @@ class StockSet(models.Model):
         return sum(stock.cost_price for stock in stocks)
     
     @property
-    def selling_price(self):
+    def selling_price_retail(self):
         stocks = self.stock.all()
         if not stocks:
             return 0
-        return sum(stock.selling_price for stock in stocks)
+        return sum(stock.selling_price_retail for stock in stocks)
+    
+    @property
+    def selling_price_wholesale(self):
+        stocks = self.stock.all()
+        if not stocks:
+            return 0
+        return sum(stock.selling_price_wholesale for stock in stocks)
     
     @property
     def initial_quantity(self):

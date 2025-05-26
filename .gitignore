@@ -12,6 +12,7 @@ db.sqlite3
 *.venv
 venv/
 /envBillApp/
+/envBismi/
 
 # Logs and other generated files
 *.log

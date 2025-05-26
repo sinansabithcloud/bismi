@@ -126,8 +126,6 @@
                 setSelect2(select); // Initialize Select2 after updating attributes
             });
 
-
-
             container.appendChild(newForm);
             totalForms.value = formCount + 1;
         });
@@ -226,7 +224,14 @@
                     remaining_quantity_tag = document.getElementById(self.id.replace("stockset", "available"));
                     selling_price_tag = document.getElementById(self.id.replace("stockset", "price_per_unit"));
                     remaining_quantity_tag.value = response.remaining_quantity;
-                    selling_price_tag.value = response.selling_price;
+                    selling_price_tag.value = response.selling_price_retail;
+
+                    if (document.getElementById("id_sales_bill_type").value === "2") {
+                        selling_price_tag.value = response.selling_price_wholesale;
+                    } else {
+                        selling_price_tag.value = response.selling_price_retail;
+                    }
+
                 }
                 updateTotalTag(self.id);
             });

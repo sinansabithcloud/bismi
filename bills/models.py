@@ -9,8 +9,6 @@ class SalesBillType(models.Model):
     def __str__(self):
         return self.name
 
-from django.db import models
-
 class SalesBill(models.Model):
     bill_datetime = models.DateTimeField(auto_now_add=True)  # keep original for now
     bill_date = models.DateField(auto_now_add=True)

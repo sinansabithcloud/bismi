@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils import timezone
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -26,9 +27,41 @@ class Fund(models.Model):
     
     @property
     def current_balance(self):
+        income = self.income_from_sales
+        purchases = self.expense_from_purchases
+        expenses = self.expenses_from_expenses
+        transfers_out = self.transfers_out.aggregate(total=Sum('amount'))['total'] or 0
+        transfers_in = self.transfers_in.aggregate(total=Sum('amount'))['total'] or 0
+
+        return (self.opening_balance + income + transfers_in
+                - (purchases + expenses + transfers_out))
+
+    
+    @property
+    def current_balance_without_transfers(self):
         return (self.opening_balance 
                 + (self.income_from_sales)
                 - (self.expense_from_purchases + self.expenses_from_expenses))
+
+class FundTransfer(models.Model):
+    from_fund = models.ForeignKey(Fund, on_delete=models.CASCADE, related_name='transfers_out')
+    to_fund = models.ForeignKey(Fund, on_delete=models.CASCADE, related_name='transfers_in')
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.from_fund == self.to_fund:
+            raise ValueError("Cannot transfer to the same fund.")
+
+        if self.amount <= 0:
+            raise ValueError("Transfer amount must be positive.")
+
+        if self.amount > self.from_fund.current_balance:
+            raise ValueError("Insufficient balance in source fund.")
+
+        super().save(*args, **kwargs)
+
 
 class ExpenseType(models.Model):
     name = models.CharField(max_length=100)

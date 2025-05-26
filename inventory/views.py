@@ -79,10 +79,12 @@ def get_stock_details(request):
     stockset = StockSet.objects.filter(id=stockset_id).first()
     if stockset:
         remaining_quantity = stockset.remaining_quantity
-        selling_price = stockset.selling_price
+        selling_price_wholesale = stockset.selling_price_wholesale
+        selling_price_retail = stockset.selling_price_retail
         return JsonResponse({
             'remaining_quantity': remaining_quantity,
-            'selling_price': selling_price
+            'selling_price_retail': selling_price_retail,
+            'selling_price_wholesale': selling_price_wholesale
         })
     return JsonResponse({
         'remaining_quantity': 0,
