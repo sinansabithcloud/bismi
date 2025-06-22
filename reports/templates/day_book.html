@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %} Day Book {% endblock %}
+
+{% block css %}
+<!-- Add any custom CSS if needed for the date picker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+
+<style>
+    .date-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.date-form label {
+    font-weight: 500;
+    color: #333;
+}
+
+.date-form input[type="date"] {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+}
+
+.date-form button {
+    padding: 0.45rem 1rem;
+    background-color: #2563eb; /* blue-600 */
+    color: white;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.date-form button:hover {
+    background-color: #1d4ed8;
+    transform: scale(1.03);
+}
+
+</style>
+{% endblock %}
+
+{% block body %}
+
+<h2 class="page-heading">Day Book for {{ date }}</h2>
+
+<!-- Date Picker Form -->
+<form method="get" action="{% url 'redirect_to_selected_day_book' %}" class="date-form">
+    <label for="date">Select Date:</label>
+    <input type="date" id="date" name="date" value="{{ date|date:'Y-m-d' }}" required>
+    <button type="submit">Go</button>
+</form>
+
+
+<div class="primary-table">
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Type</th>
+                <th>Mode</th>
+                <th>Amount</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in all_bills %}
+            <tr>
+                <td>{{ bill.time}}</td>
+                <td>{{ bill.type }}</td>
+                <td>{{ bill.mode }}</td>
+                <td>{{ bill.amount|floatformat:2 }}</td>
+                <td>
+                    {% for key, value in bill.desc.items %}
+                        {{ key }}: {{ value }} 
+                    {% endfor %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No bills for this date.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Flatpickr JavaScript if you want more advanced date picking -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+<script>
+    flatpickr("#date", {
+        dateFormat: "Y-m-d",
+    });
+</script>
+
+{% endblock %}

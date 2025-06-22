@@ -10,11 +10,8 @@
 <h2 class="page-heading">{{ report_name }} Report </h2>
 
 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-    {% if report_name == 'Monthly' %}
-    <a href="{% url 'daily_report' %}" class="primary-button">Daily Report</a>
-    {% elif report_name == 'Daily'  %}
     <a href="{% url 'monthly_report' %}" class="primary-button">Monthly Report</a>
-    {% endif %}
+    <a href="{% url 'profit_report' %}" class="primary-button">Profit Report</a>
     <a href="{% url 'home' %}" class="primary-button">Back to Home</a>
 </div>
 
@@ -42,12 +39,12 @@
         <tbody>
             {% for data in report %}
             <tr>
-                {% if report_name == 'Monthly' %}
-                    <td>{{ data.date|date:"F Y" }}</td>
-                {% else %}
-                    <td>{{ data.date|date:"F d Y" }}</td>
-                {% endif %}
-                <td>{{ data.cash_sales }}</td>
+                <td>
+                    <a href="{% url 'day_book' data.date|date:'Y-m-d' %}">
+                        {{ data.date|date:"F d Y" }}
+                    </a>
+                </td>
+                <td>{{ data.cash_sales }} {{ report_name }}</td>
                 <td>{{ data.upi_sales }}</td>
                 <td>{{ data.cash_purchases }}</td>
                 <td>{{ data.upi_purchases }}</td>

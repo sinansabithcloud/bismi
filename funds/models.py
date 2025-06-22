@@ -69,9 +69,17 @@ class ExpenseType(models.Model):
     def __str__(self):
         return self.name
 
+# Function to return the current date in local timezone (IST)
+def get_current_date():
+    return timezone.localtime(timezone.now()).date()
+
+# Function to return the current time in local timezone (IST)
+def get_current_time():
+    return timezone.localtime(timezone.now()).time()
+
 class Expense(models.Model):
-    date = models.DateField(default=timezone.now)
-    time = models.TimeField(default=timezone.now)
+    date = models.DateField(default=get_current_date)
+    time = models.TimeField(default=get_current_time)
     amount = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     description = models.TextField()
     fund = models.ForeignKey(Fund, on_delete=models.CASCADE, related_name='expenses', default=1)

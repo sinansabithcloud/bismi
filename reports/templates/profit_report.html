@@ -10,8 +10,8 @@
 <h2 class="page-heading">{{ report_name }} Report </h2>
 
 <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+    <a href="{% url 'monthly_report' %}" class="primary-button">Monthly Report</a>
     <a href="{% url 'daily_report' %}" class="primary-button">Daily Report</a>
-    <a href="{% url 'profit_report' %}" class="primary-button">Profit Report</a>
     <a href="{% url 'home' %}" class="primary-button">Back to Home</a>
 </div>
 
@@ -21,25 +21,23 @@
             <tr>
                 <th>Date</th>
                 <th>Sales</th>
-                <th>Discount</th>
-                <th>Purchase</th>
+                <th>Sales Profit</th>
                 <th>Expense</th>
-                <th>Profit</th>
+                <th>Net Profit</th>
             </tr>
         </thead>
         <tbody>
             {% for data in report %}
             <tr>
-                {% if report_name == 'Monthly' %}
-                    <td>{{ data.date|date:"F Y" }}</td>
-                {% else %}
-                    <td>{{ data.date|date:"F d Y" }}</td>
-                {% endif %}
-                <td><a href="{% url 'list_sale_view' %}">{{ data.sales }}</a></td>
-                <td><a href="{% url 'list_sale_view' %}">{{ data.discount }}</a></td>
-                <td><a href="{% url 'list_purchase_view' %}">{{ data.purchases }}</a></td>
-                <td><a href="{% url 'list_expense' %}">{{ data.expenses }}</a></td>
-                <td>{{ data.total }}</td>
+                <td>
+                    <a href="{% url 'day_book' data.date|date:'Y-m-d' %}">
+                        {{ data.date|date:"F d Y" }}
+                    </a>
+                </td>
+                <td>{{ data.sales }}</td>
+                <td>{{ data.sales_profit }}</td>
+                <td>{{ data.expenses }}</td>
+                <td>{{ data.net_profit }}</td>
             </tr>
             {% endfor %}
         </tbody>

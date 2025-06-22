@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %} Create {% if 'retail' in request.path %} Retail {% elif 'wholesale' in request.path %} Wholesale {% endif %} Bill {% endblock %}
+{% block title %} Create Sales Bill {% endblock %}
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/model_create_edit_form.css' %}">
@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-<h2 class="page-heading"> Create {% if 'retail' in request.path %} Retail {% elif 'wholesale' in request.path %} Wholesale {% endif %} Bill </h2>
+<h2 class="page-heading">Create Sales Bill</h2>
 
 <div style="display: flex; justify-content: center; gap: 10px;">
     <a href="{% url 'list_sale_view' %}" class="primary-button">History</a>
@@ -88,25 +88,6 @@
 <!-- JavaScript for dynamic formset -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-
-
-        // to auto select the wholesale or retail option
-        const path = window.location.pathname.toLowerCase();
-        const select = document.getElementById('id_sales_bill_type');
-
-        if (path.includes('retail')) {
-            select.value = "1";
-        } else {
-            select.value = "2";
-        }
-
-        const parentP = select.closest('p');
-        if (parentP) {
-            parentP.style.display = 'none';
-        }
-
-
-
         const container = document.getElementById('formset-container');
         const addBtn = document.getElementById('add-form');
         const totalForms = document.getElementById('id_sales-TOTAL_FORMS');

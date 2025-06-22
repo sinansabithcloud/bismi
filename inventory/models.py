@@ -4,7 +4,14 @@ from django.core.validators import MinValueValidator
 # Create your models here.
 
 class StockType(models.Model):
+    UNIT_CHOICES = [
+        ('', 'None'),
+        ('mtr', 'Meter'),
+        ('ml', 'Milliliter'),
+    ]
+
     name = models.CharField(max_length=100, unique=True)
+    unit = models.CharField(max_length=3, choices=UNIT_CHOICES, default='')
 
     @property
     def no_of_stocks(self):
@@ -60,6 +67,13 @@ class StockSet(models.Model):
             return "Set"
         else:
             return self.stock.first().stock_type.name if self.stock.first().stock_type else "unknown"
+    
+    @property
+    def unit(self):
+        if self.stock.all().count() > 1:
+            return ""
+        else:
+            return self.stock.first().stock_type.unit if self.stock.first().stock_type else ""
     
     @property
     def stock_pk(self):

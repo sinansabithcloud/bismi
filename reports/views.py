@@ -1,17 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from bills.models import SalesBill
 from transactions.models import Purchase
 from funds.models import Expense
 from collections import defaultdict
 from datetime import date as imported_date
+from operator import itemgetter
+from datetime import datetime
+from django.utils import timezone
 
 def daily_report(request):
     # Fetch all distinct dates for sales, purchases, and expenses
     sales_dates = SalesBill.objects.values_list('bill_date', flat=True).distinct()
     purchases_dates = Purchase.objects.values_list('date', flat=True).distinct()
     expenses_dates = Expense.objects.values_list('date', flat=True).distinct()
-
-    print(sales_dates)
 
     # Combine all unique dates into one set
     all_dates = set(sales_dates) | set(purchases_dates) | set(expenses_dates)
@@ -69,13 +70,13 @@ def daily_report(request):
         cash_expenses = sum(
             expenses_bill.amount 
             for expenses_bill in expense_bills
-            if expenses_bill.fund.name == 'Cash' 
+            if expenses_bill.fund.name == 'Cash'
         )
 
         upi_expenses = sum(
             expenses_bill.amount 
             for expenses_bill in expense_bills
-            if expenses_bill.fund.name == 'Upi' 
+            if expenses_bill.fund.name == 'Upi'
         )
 
         report[date]['cash_expenses'] = cash_expenses
@@ -176,3 +177,142 @@ def monthly_report(request):
 
     # Return the report as a JsonResponse
     return render(request, 'monthly_report.html', context)
+
+
+def profit_report(request):
+    # Fetch all distinct dates for sales, purchases, and expenses
+    sales_dates = SalesBill.objects.values_list('bill_date', flat=True).distinct()
+    expenses_dates = Expense.objects.values_list('date', flat=True).distinct()
+
+    # Combine all unique dates into one set
+    all_dates = set(sales_dates) | set(expenses_dates)
+
+    # Create a dictionary to hold the combined report
+    report = defaultdict(lambda: {
+        'sales': 0,
+        'profit': 0,
+        'expenses': 0
+    })
+
+    # Aggregate sales
+    for date in sales_dates:
+        sales_bills = SalesBill.objects.filter(bill_date=date)
+
+        sales = sum(
+            sales_bill.total_amount_after_discount 
+            for sales_bill in sales_bills
+        )
+
+        profit = sum(
+            sales_bill.profit
+            for sales_bill in sales_bills
+        )
+
+        report[date]['sales'] = sales
+        report[date]['profit'] = profit
+
+    # Aggregate expenses
+    for date in expenses_dates:
+        expense_bills = Expense.objects.filter(date=date)
+
+        expenses = sum(
+            expenses_bill.amount 
+            for expenses_bill in expense_bills
+        )
+
+        report[date]['expenses'] = expenses
+
+    # Convert report to a list of dicts sorted by date
+    report_list = [{
+        'date': date,
+        'sales': data['sales'],
+        'sales_profit': data['profit'],
+        'expenses': data['expenses'],
+        'net_profit': data['profit'] - data['expenses']}
+        for date, data in report.items()]
+    
+    for i in report_list:
+        print(i['date'])
+
+    # Sort the report by date (newest first)
+    report_list.sort(key=lambda x: x['date'], reverse=True)
+
+    context = {
+        'report_name': 'Profit', 
+        'report': report_list
+    }
+
+    # Return the report as a JsonResponse
+    return render(request, 'profit_report.html', context)
+
+
+def day_book(request, date):
+    sales_bills = SalesBill.objects.filter(bill_date=date)
+    expense_bills = Expense.objects.filter(date=date)
+    purchase_bills = Purchase.objects.filter(date=date)
+
+    all_bills = []
+
+    for bill in sales_bills:
+        all_bills.append({
+            'time':bill.bill_time,
+            'type':'Sales',
+            'mode':bill.fund.name,
+            'amount':bill.total_amount_after_discount,
+            'desc':bill.stocks
+        })
+
+    for bill in expense_bills:
+        all_bills.append({
+            'time':bill.time,
+            'type':'Expense',
+            'mode':bill.fund.name,
+            'amount':bill.amount,
+            'desc':{'reason':bill.description}
+        })
+
+    for bill in purchase_bills:
+        all_bills.append({
+            'time':bill.time,
+            'type':'Purchase',
+            'mode':bill.fund.name,
+            'amount':bill.net_total_price,
+            'desc':{bill.stockset.name:bill.net_quantity}
+        })
+
+    
+    # Sorting the bills based on time
+    all_bills = sorted(all_bills, key=itemgetter('time'), reverse=True)
+
+    # Pass the sorted bills to the template
+    context = {
+        'all_bills': all_bills,
+        'date': datetime.strptime(date, "%Y-%m-%d").date(),
+    }
+
+    return render(request, 'day_book.html', context)
+
+
+def redirect_to_selected_day_book(request):
+    # Get the selected date from the query parameter
+    selected_date = request.GET.get('date')
+
+    if not selected_date:
+        # If no date is selected, redirect to today's date
+        today = datetime.today().strftime('%Y-%m-%d')
+        return redirect('day_book', date=today)
+
+    # Redirect to the daybook view with the selected date
+    return redirect('day_book', date=selected_date)
+
+
+
+
+
+
+
+
+
+
+
+

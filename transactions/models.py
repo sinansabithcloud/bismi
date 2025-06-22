@@ -37,11 +37,21 @@ class Sale(models.Model):
     @property
     def net_quantity(self):
         return self.quantity - self.return_quantity
+    
+    @property
+    def profit(self):
+        total_cost = self.stockset.cost_price * self.net_quantity
+        return self.net_total_price - total_cost
+    
+
 
 class Purchase(models.Model):
     stockset = models.ForeignKey(StockSet, on_delete=models.CASCADE, related_name='purchases')
+
     datetime = models.DateTimeField(auto_now_add=True)
     date = models.DateField(auto_now_add=True)
+    time = models.TimeField(auto_now_add=True)
+
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
     price_per_unit = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     return_quantity = models.IntegerField(default=0, validators=[MinValueValidator(0)])

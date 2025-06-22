@@ -160,7 +160,7 @@
                         {% endif %}
                     </td>
                     <td class="text-right">
-                        {{ sale.quantity }} {% if sale.stockset.stock_type == 'Perfume' %}ml{% endif %}
+                        {{ sale.quantity }} {{ sale.stockset.unit }}
                     </td>
                     <td class="text-right">{{ sale.price_per_unit|floatformat:2 }}</td>
                     <td class="text-right">{{ sale.total_price|floatformat:2 }}</td>

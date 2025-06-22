@@ -26,9 +26,11 @@
           <a href="{% url 'inventory' %}" class="{% if 'inventory' in request.path %}active{% endif %}">Inventory</a>
           <a href="{% url 'list_funds' %}" class="{% if '/funds/' in request.path and not '/funds/expenses/' in request.path %}active{% endif %}">Funds</a>
           <a href="{% url 'create_expense' %}" class="{% if 'expenses' in request.path %}active{% endif %}">Expense</a>
-          <a href="{% url 'create_sale_view' %}" class="{% if 'sale' in request.path %}active{% endif %}">Sale</a>
+          <a href="{% url 'create_retail_view' %}" class="{% if 'retail' in request.path %}active{% endif %}">Retail</a>
+          <a href="{% url 'create_wholesale_view' %}" class="{% if 'wholesale' in request.path %}active{% endif %}">Wholesale</a>
           <a href="{% url 'create_purchase_view' %}" class="{% if 'purchase' in request.path %}active{% endif %}">Purchase</a>
-          <a href="{% url 'monthly_report' %}" class="{% if 'report' in request.path %}active{% endif %}">Report</a>
+          <a href="{% url 'profit_report' %}" class="{% if '/reports/' in request.path and not '/reports/daybook/' in request.path %}active{% endif %}">Report</a>
+          <a href="{% url 'redirect_to_selected_day_book' %}" class="{% if 'daybook' in request.path %}active{% endif %}">Day Book</a>
       </div>      
     </div>
   </nav>

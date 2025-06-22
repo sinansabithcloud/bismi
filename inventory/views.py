@@ -19,7 +19,7 @@ class Inventory(ListView):
 
 class StockCreateView(ModelNameContextMixin, CreateView):
     model = Stock
-    fields = ['name', 'initial_quantity', 'cost_price', 'selling_price', 'supplier', 'stock_type']
+    fields = ['name', 'initial_quantity', 'cost_price', 'selling_price_retail', 'selling_price_wholesale', 'supplier', 'stock_type']
     template_name = 'model_create_edit_form.html'
     success_url = reverse_lazy('inventory')
 
@@ -31,7 +31,7 @@ class StockSetCreateView(ModelNameContextMixin, CreateView):
 
 class StockTypeCreateView(ModelNameContextMixin, CreateView):
     model = StockType
-    fields = ['name']
+    fields = ['name', 'unit']
     template_name = 'model_create_edit_form.html'
     success_url = reverse_lazy('create_stock_view')
 
@@ -39,13 +39,13 @@ class StockTypeCreateView(ModelNameContextMixin, CreateView):
 
 class StockUpdateView(ModelNameContextMixin, UpdateView):
     model = Stock
-    fields = ['name', 'initial_quantity', 'cost_price', 'selling_price', 'supplier', 'stock_type']
+    fields = ['name', 'initial_quantity', 'cost_price', 'selling_price_retail', 'selling_price_wholesale', 'supplier', 'stock_type']
     template_name = 'model_create_edit_form.html'
     success_url = reverse_lazy('inventory')
 
 class StockTypeUpdateView(ModelNameContextMixin, UpdateView):
     model = StockType
-    fields = ['name']
+    fields = ['name', 'unit']
     template_name = 'model_create_edit_form.html'
     success_url = reverse_lazy('inventory')
 

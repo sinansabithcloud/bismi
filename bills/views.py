@@ -48,7 +48,7 @@ class SalesBillCreateView(CreateView):
 class SalesBillUpdateView(UpdateView):
     model = SalesBill
     form_class = SalesBillForm
-    template_name = 'bills/create_sales.html'
+    template_name = 'bills/update_sales.html'
     
     def get_success_url(self):
         return reverse('thermal_sales_bill', kwargs={'bill_number': self.object.bill_number})
@@ -108,6 +108,8 @@ class SalesBillListView(ListView):
         context['sales_bill_types'] = SalesBillType.objects.all()  # Add your second model here
         return context
 
+
+
 def bills(request):
     data = []
     for sales_bill in SalesBill.objects.all():
@@ -141,7 +143,6 @@ def full_sales_bill(request, bill_number):
 
     return render(request, 'bills/view_sales_bill.html', {'sales_bill': sales_bill})
     return render(request, 'bills/view_thermal_sales_bill.html', {'sales_bill': sales_bill})
-
 
 def thermal_sales_bill(request, bill_number):
     try:

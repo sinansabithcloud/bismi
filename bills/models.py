@@ -4,10 +4,11 @@ from funds.models import Fund
 # Create your models here.
 
 class SalesBillType(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
+
 
 class SalesBill(models.Model):
     bill_datetime = models.DateTimeField(auto_now_add=True)  # keep original for now
@@ -43,6 +44,10 @@ class SalesBill(models.Model):
     @property
     def total_amount_after_discount(self):
         return self.total_amount_before_discount - self.discount_price
+
+    @property
+    def profit(self):
+        return sum(sale.profit for sale in self.sales.all())
     
 
 
