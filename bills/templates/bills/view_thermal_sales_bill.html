@@ -60,6 +60,19 @@
 
 <body>
 
+
+
+    <div class="center" style="margin-top: 10px;">
+        <button onclick="window.print();">Print</button>
+        <a href="full">
+            <button>Normal Print</button>
+        </a>
+        <a href="/">
+            <button>Go To Home</button>
+        </a>
+    </div>
+    <br>
+
     <div class="center bold">Bismi Book Depot</div>
     <div class="center">Logan's Road, Thalassery</div>
     <div class="center">Ph: 9895188762</div>
@@ -134,15 +147,10 @@
     <div class="center">Thank You!</div>
     <div class="center">Visit Again</div>
 
-    <div class="center" style="margin-top: 10px;">
-        <button onclick="window.print();">Print</button>
-        <button onclick="window.location.href = '/';">Go To Home</button>
-    </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            //window.print();
-          
+            window.print();
+
         });
     </script>
 

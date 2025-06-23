@@ -116,6 +116,18 @@
 </head>
 
 <body>
+
+    <div class="print-button-container">
+        <button onclick="window.print();">Print Bill</button>
+        <a href="thermal">
+            <button>Thermal Print</button>
+        </a>
+        <a href="{% url 'home' %}">
+            <button>Go to Sales History</button>
+        </a>
+    </div>
+    <br>
+
     <div class="bill-container">
         <div class="bill-header">
             <h1 style="margin-bottom: 0;">Bismi Book Depot</h1>
@@ -204,13 +216,12 @@
 
     </div>
 
-    <div class="print-button-container">
-        <button onclick="window.print();">Print Bill</button>
-        <a href="{% url 'home' %}">
-            <button>Go to Sales History</button>
-        </a>
-        
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            window.print();
+
+        });
+    </script>
 
 </body>
 
