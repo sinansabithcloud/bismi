@@ -265,10 +265,10 @@ def day_book(request, date):
     for bill in expense_bills:
         all_bills.append({
             'time':bill.time,
-            'type':'Expense',
+            'type':f'Expense',
             'mode':bill.fund.name,
             'amount':bill.amount,
-            'desc':{'reason':bill.description}
+            'desc':{bill.expense_type:bill.description}
         })
 
     for bill in purchase_bills:
